@@ -104,7 +104,10 @@ client.on('messageCreate',(message) => {
                         new Discord.MessageEmbed()
                             .setColor("BLURPLE")
                             .setDescription("Click on a link to view it in an alternative frontend\n"+transformedURLs.map(e => `[${e.originalURL}](${e.newURL})`).join("\n"))
-                    ]
+                    ],
+                    allowedMentions: {
+                        repliedUser:false
+                    }
                 })
             }
         }
