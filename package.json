@@ -1,0 +1,22 @@
+{
+  "name": "fossifymyurl",
+  "version": "1.0.0",
+  "description": "Replies to messages that contain links with a button that replies with links to privacy-respecting FOSS alternative frontends",
+  "main": "index.js",
+  "scripts": {
+    "start": "",
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "engines": {
+    "node": "v16"
+  },
+  "dependencies": {
+    "discord.js": "^13.8.0",
+    "dotenv": "^16.0.2",
+    "linkifyjs": "^3.0.5",
+    "typescript": "^4.8.3"
+  }
+}

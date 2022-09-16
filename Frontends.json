@@ -1,0 +1,50 @@
+{
+    "twitter.com":{
+        "frontend":"https://nitter.foss.wtf/",
+        "rules":[
+            "SetPath [fullpath]"
+        ],
+        "include":[
+            "mobile"
+        ]
+    },
+    "imgur.com":{
+        "frontend":"https://img.foss.wtf/",
+        "rules":[
+            "([path.last]) >>> SetPath 'gallery/'",
+            "([path.last]) >>> AppendPath [path.last]"
+        ]
+    },
+    "youtube.com":{
+        "frontend":"https://invidious.snopyta.org/",
+        "rules":[
+            "SetPath [fullpath]"
+        ],
+        "include":[
+            "m"
+        ]
+    },
+    "youtu.be":{
+        "frontend":"https://invidious.snopyta.org/",
+        "rules":[
+            "([path]) >>> AddParam 'v',[path]",
+            "SetPath 'watch'"
+        ]
+    },
+    "reddit.com":{
+        "frontend":"https://teddit.net/",
+        "rules":[
+            "SetPath [fullpath]"
+        ]
+    },
+    "google.com":{
+        "frontend":"https://searx.foss.wtf/",
+        "rules":[
+            "([params.tbm]|==|'isch') >>> AddParam 'categories','images'",
+            "([params.tbm]|==|'nws') >>> AddParam 'categories','news'",
+            "([params.tbm]|==|'vid') >>> AddParam 'categories','videos'",
+            "([params.q]) >>> AddParam 'q',[params.q]",
+            "SetPath 'search'"
+        ]
+    }
+}
