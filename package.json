@@ -4,7 +4,7 @@
   "description": "Replies to messages that contain links with a button that replies with links to privacy-respecting FOSS alternative frontends",
   "main": "index.js",
   "scripts": {
-    "start": "",
+    "start": "node out/index.js",
     "test": "echo \"Error: no test specified\" && exit 1"
   },
   "keywords": [],
