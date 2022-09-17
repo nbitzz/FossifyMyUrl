@@ -1,9 +1,17 @@
 import Discord, {Intents} from "discord.js"
-import Rulang, {Environment} from "./rulang"
-import * as linkify from "linkifyjs"
-require('dotenv').config()
+import fossify from "./lib/fossify"
+import * as settings from "./lib/settings"
+import { ContextMenuCommandBuilder, SlashCommandBooleanOption, SlashCommandBuilder, SlashCommandStringOption } from "@discordjs/builders"
+import { ApplicationCommandType, Routes } from "discord-api-types/v9"
+import { REST } from "@discordjs/rest"
+import fs from "fs"
 
-let Frontends:{[key:string]:any} = require("../Frontends.json")
+interface SlashCmd {
+    SCBuilder:ContextMenuCommandBuilder|SlashCommandBuilder|Omit<SlashCommandBuilder, "addSubcommand" | "addSubcommandGroup">,
+    OnRun:(interaction:Discord.CommandInteraction) => void
+}
+
+require('dotenv').config()
 
 const client = new Discord.Client({
     intents: [
@@ -14,90 +22,19 @@ const client = new Discord.Client({
 
 client.on('ready',() => {
     console.log("[FossifyMyUrl] Logged in")
+
+    if (process.env.token && client.application?.id) {
+        const rest = new REST({ version: '9' }).setToken(process.env.token);
+        rest.put(Routes.applicationCommands(client.application.id), { body: commands.map((e) => e.SCBuilder.toJSON()) })
+            .then(() => console.log('[FossifyMyUrl] Successfully registered application commands.'))
+            .catch(console.error);
+    }
 })
 
 client.on('messageCreate',(message) => {
-    let _links = linkify.find(message.content).filter(e => e.type == "url" && (e.value.startsWith("https://") || e.value.startsWith("http://")))
-    if (message.guild?.me && _links.length > 0 && message.channel.isText() && message.channel.type != "DM") {
-        if (message.channel.permissionsFor(message.guild.me).has("SEND_MESSAGES") && !message.author.bot) {
-            // process linkify.js output
-            let links = _links.map(e => {
-                let urlParts = e.value.split("/").slice(2)
-                let domain = urlParts.splice(0,1)[0]
-                let params = ((urlParts[urlParts.length-1] || "")
-                .split("?")[1] || "")
-                .split("&")
-                .map((e:string) => {return {key:e.split("=")[0],value:decodeURI(e.split("=")[1])}})
-                let path = urlParts.join("/")
-                
-                return {
-                    domain:domain,
-                    fullpath:path,
-                    path:path.split("?")[0],
-                    params:params
-                }
-            })
-
-            let transformedURLs:{originalURL:string,newURL:string}[] = []
-
-            // transform urls
-            
-            links.forEach((url) => {
-                for (let [x,v] of Object.entries(Frontends)) {
-                    if (v && typeof v == "object") {
-                        let possible:string[] = [x,"www."+x]
-                        if (Array.isArray(v.include)) {
-                            v.include.forEach((v:string) => {
-                                possible.push(v+"."+x)
-                            })
-                        }
-                        if (possible.find(e => e == url.domain) && Array.isArray(v.rules) && v.frontend) {
-                            // setup
-                            let path = ""
-                            let params:{[key:string]:string} = {}
-
-                            // env
-                            let env:Environment = {
-                                Constants: {
-                                    fullpath:url.fullpath,
-                                    domain:url.domain,
-                                    path:url.path,
-                                    "undefined":undefined,
-                                    "path.last":url.path.split("/")[url.path.split("/").length-1],
-                                    "path.first":url.path.split("/")[0]
-                                },
-                                Functions: {
-                                    AddParam: function(k:string,v:string) {params[k] = v},
-                                    SetPath: function(v:string) {path = v},
-                                    AppendPath: function(v:string) {path += v}
-                                }
-                            }
-
-                            url.params.forEach((v:{key:string,value:string}) => {
-                                env.Constants["params."+v.key] = v.value
-                            })
-                            
-                            // run rulang
-
-                            v.rules.forEach((st:string) => {
-                                Rulang(st,env)
-                            })
-
-                            // compile params
-                            
-                            let prms:string[] = []
-
-                            for (let [a,b] of Object.entries(params)) {
-                                prms.push(`${a}=${encodeURI(b)}`)
-                            }
-
-                            transformedURLs.push({originalURL:url.domain+"/"+url.fullpath,newURL:`${v.frontend}${path}${prms.length > 0 ? "?" : ""}${prms.join("&")}`})
-                            
-                        }
-                    }
-                }
-            })
-            
+    if (message.guild?.me && message.channel.isText() && message.channel.type != "DM") {
+        if (message.channel.permissionsFor(message.guild.me).has("SEND_MESSAGES") && !message.author.bot && settings.getServerSetting(message.guild.id,"AutoFossify")) {
+            let transformedURLs = fossify(message.content)
             if (transformedURLs.length > 0) {
                 message.reply({
                     embeds:[
@@ -110,6 +47,120 @@ client.on('messageCreate',(message) => {
                     }
                 })
             }
+        }
+    }
+})
+
+// slash cmds
+
+const commands:SlashCmd[] = [
+    {
+        SCBuilder: new SlashCommandBuilder()
+        .setName("frontends")
+        .setDescription("Sends the contents of the frontends.json file."),
+        OnRun: function(int) {
+            // discord devs making the worst api ever
+
+            int.deferReply({ephemeral:true}).then(() => {
+                fs.readFile(__dirname+"/../Frontends.json",(err,buf) => {
+                    if (err) {int.editReply({content:`Failed to get file: ${err.toString()}`});return;}
+                    int.editReply({
+                        files:[{name:"Frontends.json", attachment:__dirname+"/../Frontends.json"}]
+                    })
+                })
+            })
+        }
+    },
+    {
+        SCBuilder: new SlashCommandBuilder()
+        .setName("fossify")
+        .setDescription("Returns fossified links in the string provided.")
+        .addStringOption(new SlashCommandStringOption().setName("string").setDescription("String to fossify")),
+        OnRun: function(int) {
+            int.deferReply({ephemeral:true}).then(() => {
+                let str = int.options.getString("string")
+                if (str) {
+                    let transformedURLs = fossify(str)
+                    if (transformedURLs.length > 0) {
+                        int.editReply({
+                            embeds:[
+                                new Discord.MessageEmbed()
+                                    .setColor("BLURPLE")
+                                    .setDescription("Click on a link to view it in an alternative frontend\n"+transformedURLs.map(e => `[${e.originalURL}](${e.newURL})`).join("\n"))
+                            ]
+                        })
+                    } else {
+                        int.editReply("No links found")
+                    }
+                } else {
+                    int.editReply("Could not find string parameter")
+                }
+            })
+        }
+    },
+    {
+        SCBuilder: new SlashCommandBuilder()
+        .setName("settings")
+        .setDescription("Returns fossified links in the string provided.")
+        .addStringOption(new SlashCommandStringOption().addChoices(...settings.getSettings().map(e => {return {name:e,value:e}})).setRequired(true).setName("setting").setDescription("The setting to change"))
+        .addBooleanOption(new SlashCommandBooleanOption().setName("enabled").setDescription("Whether or not the setting is enabled").setRequired(true))
+        .setDMPermission(false)
+        .setDefaultMemberPermissions(Discord.Permissions.FLAGS.MANAGE_GUILD),
+        OnRun: function(int) {
+            int.deferReply({ephemeral:true}).then(() => {
+                let option = int.options.getString("setting")
+                let enabled = int.options.getBoolean("enabled")
+                if (option && settings.getSettings().find(e => e == option) && int.guild?.id && enabled != undefined) {
+                    settings.setServerSetting(int.guild?.id,option,enabled) 
+                    int.editReply(`${option} is now ${enabled.toString()}`)
+                } else {
+                    int.editReply("Invalid setting")
+                }
+            })
+        }
+    },
+    // fossify ctxmnu
+    {
+        SCBuilder:new ContextMenuCommandBuilder()
+        .setName("Fossify")
+        .setType(ApplicationCommandType.Message),
+        OnRun: () => {}
+    }
+]
+
+client.on("interactionCreate",(int) => {
+    if (int.isCommand()) {
+        let cmd = commands.find(e => e.SCBuilder.name == int.commandName)
+        if (cmd) {
+            cmd.OnRun(int)
+        }
+
+    // excuse the sorta bad code here
+    // but there's not really a point
+    // in having a specific system for
+    // ctxmnu commands when this is
+    // the only one
+    } else if (int.isMessageContextMenu()) {
+        if (int.commandName == "Fossify") {
+            int.deferReply({ephemeral:true}).then(() => {
+                let str = int.targetMessage.content
+                if (str) {
+                    let transformedURLs = fossify(str)
+                    if (transformedURLs.length > 0) {
+                        int.editReply({
+                            embeds:[
+                                new Discord.MessageEmbed()
+                                    .setColor("BLURPLE")
+                                    .setDescription("Click on a link to view it in an alternative frontend\n"+transformedURLs.map(e => `[${e.originalURL}](${e.newURL})`).join("\n"))
+                            ]
+                        })
+                    } else {
+                        int.editReply("No links found")
+                    }
+                } else {
+                    int.editReply("Message content empty")
+                }
+            })
         }
     }
 })

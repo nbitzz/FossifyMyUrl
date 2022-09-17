@@ -37,6 +37,12 @@
             "SetPath [fullpath]"
         ]
     },
+    "medium.com":{
+        "frontend":"https://libmedium.batsense.net/",
+        "rules":[
+            "SetPath [fullpath]"
+        ]
+    },
     "google.com":{
         "frontend":"https://searx.foss.wtf/",
         "rules":[

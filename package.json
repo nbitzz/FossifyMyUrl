@@ -14,6 +14,9 @@
     "node": "v16"
   },
   "dependencies": {
+    "@discordjs/builders": "^1.2.0",
+    "@discordjs/rest": "^1.1.0",
+    "discord-api-types": "^0.37.10",
     "discord.js": "^13.8.0",
     "dotenv": "^16.0.2",
     "linkifyjs": "^3.0.5",
