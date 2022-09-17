@@ -80,7 +80,7 @@ export let SlashCommands:SlashCmd[] = [
                                 new Discord.MessageEmbed()
                                     .setColor("BLURPLE")
                                     .setDescription("Click on a link to view it in an alternative frontend\n"+transformedURLs.map(e => `[${e.originalURL}](${e.newURL})`).join("\n"))
-                                    .setFooter({text:"(These links are  hyperlinks. Clicking on one will lead you to the frontend selected in the configuration.)"})
+                                    .setFooter({text:"(These links are hyperlinks. Clicking on one will lead you to the frontend selected in the configuration.)"})
                             ]
                         })
                     } else {
