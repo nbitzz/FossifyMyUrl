@@ -101,7 +101,7 @@ const commands:SlashCmd[] = [
     {
         SCBuilder: new SlashCommandBuilder()
         .setName("settings")
-        .setDescription("Returns fossified links in the string provided.")
+        .setDescription("Configures FossifyMyUrl in a server.")
         .addStringOption(new SlashCommandStringOption().addChoices(...settings.getSettings().map(e => {return {name:e,value:e}})).setRequired(true).setName("setting").setDescription("The setting to change"))
         .addBooleanOption(new SlashCommandBooleanOption().setName("enabled").setDescription("Whether or not the setting is enabled").setRequired(true))
         .setDMPermission(false)
