@@ -75,7 +75,7 @@ const commands:SlashCmd[] = [
         SCBuilder: new SlashCommandBuilder()
         .setName("fossify")
         .setDescription("Returns fossified links in the string provided.")
-        .addStringOption(new SlashCommandStringOption().setName("string").setDescription("String to fossify")),
+        .addStringOption(new SlashCommandStringOption().setName("string").setDescription("String to fossify").setRequired(true)),
         OnRun: function(int) {
             int.deferReply({ephemeral:true}).then(() => {
                 let str = int.options.getString("string")
