@@ -8,7 +8,8 @@ fs.readFile(__dirname+"/../../.data/settings.json",(err,buf) => {
 })
 
 export let Defaults:{[key:string]:any} = {
-    AutoFossify:true
+    AutoFossify:true,
+    AutoProxy:false,
 }
 
 export function saveSettings() {

@@ -44,7 +44,7 @@
         ]
     },
     "google.com":{
-        "frontend":"https://searx.foss.wtf/",
+        "frontend":"https://serx.ml/",
         "rules":[
             "([params.tbm]|==|'isch') >>> AddParam 'categories','images'",
             "([params.tbm]|==|'nws') >>> AddParam 'categories','news'",

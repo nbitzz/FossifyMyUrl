@@ -6,4 +6,4 @@ You'll also need to install dotenv, typescript & linkifyjs.
 In theory, you should also be able to install these using `npm update`.
 
 ## Configuring FossifyMyUrl
-You can change frontend settings using the Frontends.json file.
+You can change frontend settings using the Frontends.json file. Other options can be found in the Fossify.json file.
