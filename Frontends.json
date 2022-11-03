@@ -16,7 +16,7 @@
         ]
     },
     "youtube.com":{
-        "frontend":"https://invidious.snopyta.org/",
+        "frontend":"https://inv.vern.cc/",
         "rules":[
             "SetPath [fullpath]"
         ],
@@ -25,10 +25,16 @@
         ]
     },
     "youtu.be":{
-        "frontend":"https://invidious.snopyta.org/",
+        "frontend":"https://inv.vern.cc/",
         "rules":[
             "([path]) >>> AddParam 'v',[path]",
             "SetPath 'watch'"
+        ]
+    },
+    "quora.com":{
+        "frontend":"https://quetre.foss.wtf/",
+        "rules":[
+            "SetPath [fullpath]"
         ]
     },
     "reddit.com":{
