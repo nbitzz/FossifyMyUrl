@@ -41,6 +41,9 @@
         "frontend":"https://teddit.net/",
         "rules":[
             "SetPath [fullpath]"
+        ],
+        "include":[
+            "old"
         ]
     },
     "medium.com":{
