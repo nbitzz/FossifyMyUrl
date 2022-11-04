@@ -43,7 +43,8 @@
             "SetPath [fullpath]"
         ],
         "include":[
-            "old"
+            "old",
+            "i"
         ]
     },
     "medium.com":{
