@@ -16,7 +16,7 @@
         ]
     },
     "youtube.com":{
-        "frontend":"https://inv.vern.cc/",
+        "frontend":"https://tube.foss.wtf/",
         "rules":[
             "SetPath [fullpath]"
         ],
