@@ -25,7 +25,7 @@
         ]
     },
     "youtu.be":{
-        "frontend":"https://inv.vern.cc/",
+        "frontend":"https://tube.foss.wtf/",
         "rules":[
             "([path]) >>> AddParam 'v',[path]",
             "SetPath 'watch'"
