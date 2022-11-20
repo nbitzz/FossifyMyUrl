@@ -1,6 +1,6 @@
 {
     "twitter.com":{
-        "frontend":"https://nitter.foss.wtf/",
+        "frontend":"https://nitter.sethforprivacy.com/",
         "rules":[
             "SetPath [fullpath]"
         ],
@@ -16,7 +16,7 @@
         ]
     },
     "youtube.com":{
-        "frontend":"https://inv.vern.cc/",
+        "frontend":"https://invidious.sethforprivacy.com/",
         "rules":[
             "SetPath [fullpath]"
         ],
@@ -25,7 +25,7 @@
         ]
     },
     "youtu.be":{
-        "frontend":"https://inv.vern.cc/",
+        "frontend":"https://invidious.sethforprivacy.com/",
         "rules":[
             "([path]) >>> AddParam 'v',[path]",
             "SetPath 'watch'"
@@ -38,7 +38,7 @@
         ]
     },
     "reddit.com":{
-        "frontend":"https://teddit.net/",
+        "frontend":"https://teddit.sethforprivacy.com/",
         "rules":[
             "SetPath [fullpath]"
         ],
@@ -54,7 +54,7 @@
         ]
     },
     "google.com":{
-        "frontend":"https://serx.ml/",
+        "frontend":"https://searx.work/",
         "rules":[
             "([params.tbm]|==|'isch') >>> AddParam 'categories','images'",
             "([params.tbm]|==|'nws') >>> AddParam 'categories','news'",
