@@ -62,5 +62,17 @@
             "([params.q]) >>> AddParam 'q',[params.q]",
             "SetPath 'search'"
         ]
+    },
+    "tiktok.com":{
+        "frontend":"https://proxitok.privacydev.net/",
+        "rules":[
+            "SetPath [fullpath]"
+        ]
+    },
+    "odysee.com":{
+        "frontend":"https://librarian.esmailelbob.xyz/",
+        "rules":[
+            "SetPath [fullpath]"
+        ]
     }
 }
