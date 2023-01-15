@@ -1,6 +1,6 @@
 {
   "name": "fossifymyurl",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Replies to messages that contain links with a button that replies with links to privacy-respecting FOSS alternative frontends",
   "main": "index.js",
   "scripts": {

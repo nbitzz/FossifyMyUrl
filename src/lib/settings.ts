@@ -30,7 +30,7 @@ export function getServerSettings(serverId:string) {
 }
 
 export function getServerSetting(serverId:string,setting:string) {
-    return (CurrentSettings[serverId] || {})[setting] || Defaults[setting]
+    return (CurrentSettings[serverId] || {})[setting] ?? Defaults[setting]
 }
 
 export function setServerSetting(serverId:string,setting:string,value:boolean) {
